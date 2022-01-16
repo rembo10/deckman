@@ -1,0 +1,16 @@
+# python
+__pycache__/
+*.pyc
+.pytest_cache
+
+# js
+node_modules/
+
+# generated files
+dist/
+*.yaml
+*.db*
+*.log
+
+# editor
+*.swp

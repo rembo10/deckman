@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "deckman"
+version = "1.0.0"
+description = "declarative music library manager"
+authors = ["rembo10 <rembo10@users.noreply.github.com>"]
+license = "WTFPL"
+
+[tool.poetry.scripts]
+deckman = "deckman.main:start"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+requests = "^2.27.1"
+Unidecode = "^1.3.2"
+PyYAML = "^6.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+flake8 = "^4.0.1"
+mypy = "^0.931"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
