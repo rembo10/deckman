@@ -11,6 +11,7 @@ from deckman.model.profile import Profile
 class TrackInfo:
     title: str
     artists: List[JoinArtist]
+    albums: List[Album]
 
 
 @dataclass
@@ -39,21 +40,15 @@ class Track:
     def __init__(
         self,
         external: ExternalTrack,
-        title: str = None,
-        artists: List[JoinArtist] = [],
-        albums: List[Album] = [],
+        info: TrackInfo,
         wanted_profile: Profile = None
     ):
         self.external = external
-        self.title = title
-        self.artists = artists
-        self.albums = albums
+        self.info = info
         self.wanted_profile = wanted_profile
 
     def update_info(self):
-        info = self.external.get_info()
-        self.title = info.title
-        self.artists = info.artists
+        self.info = self.external.get_info()
 
 
 @dataclass
