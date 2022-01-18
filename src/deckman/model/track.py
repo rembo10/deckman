@@ -1,6 +1,6 @@
 from abc import ABC
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 from deckman.model.artist import JoinArtist
 from deckman.model.album import Album
@@ -40,11 +40,14 @@ class Track:
     def __init__(
         self,
         external: ExternalTrack,
-        info: TrackInfo,
-        wanted_profile: Profile = None
+        info: Optional[TrackInfo] = None,
+        wanted_profile: Optional[Profile] = None
     ):
         self.external = external
-        self.info = info
+        if info is None:
+            self.update_info()
+        else:
+            self.info = info
         self.wanted_profile = wanted_profile
 
     def update_info(self):

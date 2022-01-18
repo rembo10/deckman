@@ -10,11 +10,10 @@ from deckman.model.profile import Profile
 @dataclass
 class AlbumInfo:
     title: str
-    title_sort: str
     artists: List[JoinArtist]
-    release_date: Optional[date]
-    image_url: Optional[str]
-    description: Optional[str]
+    release_date: Optional[date] = None
+    image_url: Optional[str] = None
+    description: Optional[str] = None
 
 
 @dataclass
@@ -31,12 +30,18 @@ class Album:
     def __init__(
         self,
         external: ExternalAlbum,
-        info: AlbumInfo,
-        wanted_profile: Profile = None
+        info: Optional[AlbumInfo] = None,
+        wanted_profile: Optional[Profile] = None
     ):
         self.external = external
-        self.info = info
+        if info is None:
+            self.update_info()
+        else:
+            self.info = info
         self.wanted_profile = wanted_profile
+
+    def update_info(self):
+        self.info = self.external.get_info()
 
 
 class AlbumRepo(ABC):
