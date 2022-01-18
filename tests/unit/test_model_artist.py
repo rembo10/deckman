@@ -15,7 +15,7 @@ from deckman.model.artist import (
 
 class FakeExternalArtist(ExternalArtist):
     def get_info(self) -> ArtistInfo:
-        return ArtistInfo("The Fake Artist")
+        return ArtistInfo("The Fake Artist", "Fake Artist, The")
 
 
 @pytest.fixture
@@ -34,6 +34,11 @@ class FakeArtistRepo(ArtistRepo):
         return self.artists
 
 
+def test_can_create_artist_from_external_id(fake_artist):
+    assert fake_artist.info.name == "The Fake Artist"
+    assert fake_artist.info.name_sort == "Fake Artist, The"
+
+
 def test_can_add_artist(fake_artist):
     repo = FakeArtistRepo()
     repo.add(fake_artist)
@@ -42,11 +47,6 @@ def test_can_add_artist(fake_artist):
 
 def test_new_artist_defaults_to_tracking(fake_artist):
     assert fake_artist.status == ARTIST_STATUS.TRACKING
-
-
-def test_can_get_artist_info(fake_artist):
-    fake_artist.update_info()
-    assert fake_artist.info.name == "The Fake Artist"
 
 
 def make_join_artists(jps: List[str]) -> List[JoinArtist]:
