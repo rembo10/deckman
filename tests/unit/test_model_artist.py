@@ -8,7 +8,19 @@ from deckman.model.artist import (
         ArtistInfo,
         ArtistRepo,
         ExternalArtist,
+        JoinArtist,
+        join
     )
+
+
+class FakeExternalArtist(ExternalArtist):
+    def get_info(self) -> ArtistInfo:
+        return ArtistInfo("The Fake Artist")
+
+
+@pytest.fixture
+def fake_artist():
+    return Artist(FakeExternalArtist("1"))
 
 
 class FakeArtistRepo(ArtistRepo):
@@ -20,16 +32,6 @@ class FakeArtistRepo(ArtistRepo):
 
     def get(self) -> List[Artist]:
         return self.artists
-
-
-class FakeExternalArtist(ExternalArtist):
-    def get_info(self) -> ArtistInfo:
-        return ArtistInfo("The Fake Artist", "Fake Artist, The")
-
-
-@pytest.fixture
-def fake_artist():
-    return Artist(FakeExternalArtist("12345"))
 
 
 def test_can_add_artist(fake_artist):
@@ -45,4 +47,26 @@ def test_new_artist_defaults_to_tracking(fake_artist):
 def test_can_get_artist_info(fake_artist):
     fake_artist.update_info()
     assert fake_artist.info.name == "The Fake Artist"
-    assert fake_artist.info.name_sort == "Fake Artist, The"
+
+
+def make_join_artists(jps: List[str]) -> List[JoinArtist]:
+    def make_join_artist(idx: int, jp: str) -> JoinArtist:
+        return JoinArtist(
+            Artist(ExternalArtist(str(idx)), ArtistInfo(f"FA{idx}")),
+            jp, idx)
+    return [make_join_artist(idx, jp) for idx, jp in enumerate(jps)]
+
+
+def test_can_can_join_artists():
+    join_artists = make_join_artists([" & ", ""])
+    assert join(join_artists) == "FA0 & FA1"
+
+
+def test_join_order_doesnt_matter():
+    join_artists = make_join_artists([" & ", ""])
+    assert join([join_artists[1], join_artists[0]]) == "FA0 & FA1"
+
+
+def test_join_single_artist():
+    join_artists = make_join_artists([""])
+    assert join(join_artists) == "FA0"

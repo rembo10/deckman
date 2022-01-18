@@ -1,6 +1,7 @@
 from abc import ABC
 from dataclasses import dataclass
 from enum import Enum
+from functools import reduce
 from typing import List, Optional
 
 
@@ -13,7 +14,7 @@ class ARTIST_STATUS(Enum):
 @dataclass
 class ArtistInfo:
     name: str
-    name_sort: str
+    name_sort: Optional[str] = None
     image_url: Optional[str] = None
     description: Optional[str] = None
 
@@ -31,12 +32,15 @@ class Artist:
     def __init__(
         self,
         external: ExternalArtist,
-        info: ArtistInfo = None,
+        info: Optional[ArtistInfo] = None,
         status: ARTIST_STATUS = ARTIST_STATUS.TRACKING
 
     ):
         self.external = external
-        self.info = info
+        if info is None:
+            self.update_info()
+        else:
+            self.info = info
         self.status = status
 
     def update_info(self):
@@ -52,6 +56,15 @@ class JoinArtist(Artist):
         self.artist = artist
         self.join_phrase = join_phrase
         self.position = position
+
+
+def join(jas: List[JoinArtist]) -> Optional[str]:
+    if any(x.artist.info is None for x in jas):
+        return None
+    else:
+        return reduce(
+            lambda a, b: a + b.artist.info.name + b.join_phrase,
+            sorted(jas, key=lambda x: x.position), "")
 
 
 class ArtistRepo(ABC):
