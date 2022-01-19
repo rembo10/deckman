@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import Enum
 from functools import reduce
@@ -22,7 +22,7 @@ class ArtistInfo:
 @dataclass
 class ExternalArtist:
 
-    id: str
+    external_id: str
 
     def get_info(self) -> ArtistInfo:
         raise NotImplementedError
@@ -64,13 +64,17 @@ def join(jas: List[JoinArtist]) -> Optional[str]:
     else:
         return reduce(
             lambda a, b: a + b.artist.info.name + b.join_phrase,
-            sorted(jas, key=lambda x: x.position), "")
+            sorted(jas, key=lambda x: x.position),
+            ""
+        )
 
 
 class ArtistRepo(ABC):
 
+    @abstractmethod
     def add(self, artist: Artist):
         raise NotImplementedError
 
+    @abstractmethod
     def get(self) -> List[Artist]:
         raise NotImplementedError
