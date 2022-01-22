@@ -35,7 +35,7 @@ jobs:
         id: cache
         with:
           path: .venv
-          key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
+          key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
 
       - name: Ensure cache is healthy
         if: steps.cache.outputs.cache-hit == 'true'
@@ -48,12 +48,12 @@ jobs:
 
       - name: Run pytest
         shell: bash
-        run: poetry run pytest tests
+        run: poetry run pytest tests/
 
       - name: Run flake8
         shell: bash
-        run: poetry run flake8 src tests
+        run: poetry run flake8 src/ tests/
 
       - name: Run mypy
         shell: bash
-        run: poetry run mypy src tests
+        run: poetry run mypy src/ tests/
