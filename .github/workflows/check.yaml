@@ -3,7 +3,7 @@ name: check
 on: [push, pull_request]
 
 jobs:
-  build:
+  tests:
 
     runs-on: ubuntu-latest
     strategy:
@@ -48,12 +48,12 @@ jobs:
 
       - name: Run pytest
         shell: bash
-        run: poetry run pytest
+        run: poetry run pytest tests
 
       - name: Run flake8
         shell: bash
-        run: poetry run flake8
+        run: poetry run flake8 src tests
 
       - name: Run mypy
         shell: bash
-        run: poetry run mypy .
+        run: poetry run mypy src tests
