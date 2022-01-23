@@ -40,13 +40,16 @@ class LossySettings:
     def __eq__(self, other):
         return self.bitrate == other.bitrate
 
+
 Settings = Union[LosslessSettings, LossySettings]
+
 
 @dataclass
 class TargetSize:
     target: int
     min: int
     max: int
+
 
 @dataclass
 class Quality:
@@ -57,7 +60,7 @@ class Quality:
     @property
     def name(self) -> str:
         return self.settings.name
-    
+
     def _calculate_size(self, seconds: int) -> int:
         return self.settings.calculate_size(seconds)
 
@@ -93,7 +96,7 @@ class Profile:
 
     Profiles will also be attached to trackable entities,
     e.g. artists, labels etc., to be able to override
-    the default and set a profile for any incoming 
+    the default and set a profile for any incoming
     tracks / albums.
     """
     name: str
@@ -103,14 +106,22 @@ class Profile:
 
     def choose_best_result(
         self,
-        results: List[Result], 
+        results: List[Result],
         seconds: int
     ) -> Result:
         for quality in self.qualities:
-            target_size = quality.calculate_target_size(seconds, self.tolerance)
-            sorted_results = sorted(results, key=lambda result: target_size.target - result.size)
+            target_size = quality.calculate_target_size(
+                seconds, self.tolerance
+            )
+            sorted_results = sorted(
+                results,
+                key=lambda result: target_size.target - result.size
+            )
             for result in sorted_results:
-                if is_right_size((target_size.min, target_size.max), result.size):
+                if is_right_size(
+                    (target_size.min, target_size.max),
+                    result.size
+                ):
                     return result
 
         return None
