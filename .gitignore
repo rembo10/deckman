@@ -8,9 +8,10 @@ node_modules/
 
 # generated files
 dist/
-*.yaml
+config.yaml
 *.db*
 *.log
 
 # editor
 *.swp
+*.swo
