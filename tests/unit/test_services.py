@@ -1,11 +1,9 @@
-from typing import List
-
-from deckman.model.artist import Artist, ArtistInfo, ArtistRepo
 from deckman.services import (
     add_artist_by_musicbrainz_id
 )
 
-from .shared import FakeArtistRepo
+from .shared import FakeArtistRepo, FakeInfoService
+
 
 class FakeSession:
     commited = False
@@ -13,17 +11,14 @@ class FakeSession:
     def commit(self):
         self.commited = True
 
-class FakeMusicBrainz:
-    def get_artist_info(self, musicbrainz_id: str) -> ArtistInfo:
-        return ArtistInfo(
-                "The Fake Artist", "Fake Artist, The")
 
 def test_can_add_artist_by_musicbrainz_id():
-    mb = FakeMusicBrainz()
+    info_service = FakeInfoService()
     repo = FakeArtistRepo()
     session = FakeSession()
-    add_artist_by_musicbrainz_id("123", mb, repo, session)  
+    print(repo.artists)
+    add_artist_by_musicbrainz_id("123", info_service, repo, session)
+    print(repo.artists)
     assert len(repo.artists) == 1
     assert repo.artists[0].name == "The Fake Artist"
-    assert session.commited == True
-
+    assert session.commited is True

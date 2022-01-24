@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Union
+from typing import List, Optional, Union
 
 
 @dataclass
@@ -72,13 +72,13 @@ class Quality:
         target_size = self._calculate_size(seconds)
         return TargetSize(
             target_size,
-            (1 - tolerance) * target_size,
-            (1 + tolerance) * target_size
+            round((1 - tolerance) * target_size),
+            round((1 + tolerance) * target_size)
         )
 
 
-def is_right_size(min_max_size: (int, int), size: int) -> bool:
-    return size >= min_max_size[0] and size <= min_max_size[1]
+def is_right_size(min_size: int, max_size: int, size: int) -> bool:
+    return min_size <= size <= max_size
 
 
 @dataclass
@@ -100,15 +100,15 @@ class Profile:
     tracks / albums.
     """
     name: str
-    tolerance: float
     qualities: List[Quality]
-    dual_formats: bool = False
+    tolerance: float = 0.2
+    dual_formats: Optional[bool] = False
 
     def choose_best_result(
         self,
         results: List[Result],
         seconds: int
-    ) -> Result:
+    ) -> Optional[Result]:
         for quality in self.qualities:
             target_size = quality.calculate_target_size(
                 seconds, self.tolerance
@@ -119,54 +119,10 @@ class Profile:
             )
             for result in sorted_results:
                 if is_right_size(
-                    (target_size.min, target_size.max),
+                    target_size.min,
+                    target_size.max,
                     result.size
                 ):
                     return result
 
         return None
-
-
-qualities = {
-    "cd lossless": LosslessSettings("cd lossless", 44.1, 16, 2),
-    "hi-res lossless": LosslessSettings("hi-res lossless", 192, 24, 2),
-    "320cbr": LossySettings("320cbr", 320),
-    "256cbr": LossySettings("256cbr", 256),
-    "v0": LossySettings("v0", 245),
-    "v1": LossySettings("v1", 225),
-    "v2": LossySettings("v2", 190),
-    "v3": LossySettings("v3", 175)
-}
-
-initial_profiles = [
-    Profile("CD Lossless", 0.2, [
-        Quality(qualities["cd lossless"], True)
-    ]),
-    Profile("Hi-Res Lossless", 0.2, [
-        Quality(qualities["hi-res lossless"], True)
-    ]),
-    Profile("Best Available (Hi-Res)", 0.2, [
-        Quality(qualities["hi-res lossless"], True),
-        Quality(qualities["cd lossless"], False),
-        Quality(qualities["320cbr"], False),
-        Quality(qualities["v0"], False),
-        Quality(qualities["256cbr"], False),
-    ]),
-    Profile("Best Available", 0.2, [
-        Quality(qualities["cd lossless"], True),
-        Quality(qualities["320cbr"], False),
-        Quality(qualities["v0"], False),
-        Quality(qualities["256cbr"], False),
-        Quality(qualities["v1"], False)
-    ]),
-    Profile("FLAC or MP3", 0.2, [
-        Quality(qualities["cd lossless"], True),
-        Quality(qualities["320cbr"], True),
-        Quality(qualities["v0"], True),
-    ]),
-    Profile("MP3", 0.2, [
-        Quality(qualities["v0"], True),
-        Quality(qualities["320cbr"], True),
-        Quality(qualities["v1"], True)
-    ])
-]

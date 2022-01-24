@@ -23,16 +23,15 @@ def test_lossy_calculate_size():
 
 
 def test_is_right_size():
-    size_range = (300, 400)
-    assert is_right_size(size_range, 300) is True
-    assert is_right_size(size_range, 400) is True
-    assert is_right_size(size_range, 299) is False
-    assert is_right_size(size_range, 401) is False
+    min_size = 300
+    max_size = 400
+    for s, v in [(300, True), (400, True), (299, False), (401, False)]:
+        assert is_right_size(min_size, max_size, s) is v
 
 
 def test_profile_chooses_best_result_single_quality():
     # 300 seconds @ 320kbps == 12000000 bytes
-    p = Profile("p", 0.2, [Quality(LossySettings("q1", 320))])
+    p = Profile("p", [Quality(LossySettings("q1", 320))], 0.1)
     r = [
             Result("1", 7000000),   # outside tolerance
             Result("2", 11000000),  # closest inside tolerance

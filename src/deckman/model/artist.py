@@ -1,8 +1,12 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from datetime import datetime
 from enum import Enum
 from functools import reduce
 from typing import List, Optional
+
+from deckman.model.info_service import InfoService
+from deckman.model.profile import Profile
 
 
 class ARTIST_STATUS(Enum):
@@ -12,39 +16,24 @@ class ARTIST_STATUS(Enum):
 
 
 @dataclass
-class ArtistInfo:
-    name: str
+class Artist:
+    id: int
+    musicbrainz_id: str
+    name: Optional[str] = None
     name_sort: Optional[str] = None
     image_url: Optional[str] = None
     description: Optional[str] = None
+    profile: Optional[Profile] = None
+    status: ARTIST_STATUS = ARTIST_STATUS.TRACKING
+    updated: Optional[datetime] = None
 
-
-@dataclass
-class ExternalArtist:
-
-    external_id: str
-
-    def get_info(self) -> ArtistInfo:
-        raise NotImplementedError
-
-
-class Artist:
-    def __init__(
-        self,
-        external: ExternalArtist,
-        info: Optional[ArtistInfo] = None,
-        status: ARTIST_STATUS = ARTIST_STATUS.TRACKING
-
-    ):
-        self.external = external
-        if info is None:
-            self.update_info()
-        else:
-            self.info = info
-        self.status = status
-
-    def update_info(self):
-        self.info = self.external.get_info()
+    def update_info(self, info_service: InfoService):
+        info = info_service.get_artist_info(self.musicbrainz_id)
+        self.name = info.name
+        self.name_sort = info.name_sort
+        self.image_url = info.image_url
+        self.description = info.description
+        self.updated = datetime.now()
 
 
 class JoinArtist(Artist):
@@ -59,14 +48,16 @@ class JoinArtist(Artist):
 
 
 def join(jas: List[JoinArtist]) -> Optional[str]:
-    if any(x.artist.info is None for x in jas):
-        return None
-    else:
-        return reduce(
-            lambda a, b: a + b.artist.info.name + b.join_phrase,
-            sorted(jas, key=lambda x: x.position),
-            ""
-        )
+    def func(a, b):
+        if a is None or b.artist.name is None:
+            return None
+        else:
+            return a + b.artist.name + b.join_phrase
+    return reduce(
+        func,
+        sorted(jas, key=lambda x: x.position),
+        ""
+    )
 
 
 class ArtistRepo(ABC):
@@ -76,5 +67,9 @@ class ArtistRepo(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get(self) -> List[Artist]:
+    def get(self, id: int):
+        raise NotImplementedError
+
+    @abstractmethod
+    def list(self) -> List[Artist]:
         raise NotImplementedError
