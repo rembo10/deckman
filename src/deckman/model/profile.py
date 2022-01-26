@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import List, Optional, Union
 
@@ -5,15 +6,16 @@ from typing import List, Optional, Union
 @dataclass
 class LosslessSettings:
     """Lossless quality representation"""
+    id: int
     name: str
-    sample_rate_khz: float
+    sample_rate_hz: int
     bit_depth: int
     channels: int
 
     def calculate_size(self, seconds: int) -> int:
         """Returns number of bytes"""
         return round(
-            self.sample_rate_khz * 1000
+            self.sample_rate_hz
             * self.bit_depth
             * self.channels
             * seconds
@@ -21,7 +23,7 @@ class LosslessSettings:
 
     def __eq__(self, other):
         return (
-            self.sample_rate_khz == other.sample_rate_khz and
+            self.sample_rate_hz == other.sample_rate_hz and
             self.bit_depth == other.bit_depth and
             self.channels == other.channels
         )
@@ -30,6 +32,7 @@ class LosslessSettings:
 @dataclass
 class LossySettings:
     """Lossy quality representation"""
+    id: int
     name: str
     bitrate: int
 
@@ -51,9 +54,10 @@ class TargetSize:
     max: int
 
 
-@dataclass
+@dataclass(frozen=True)
 class Quality:
 
+    id: int
     settings: Settings
     finish: bool = False
 
@@ -81,13 +85,13 @@ def is_right_size(min_size: int, max_size: int, size: int) -> bool:
     return min_size <= size <= max_size
 
 
-@dataclass
+@dataclass(frozen=True)
 class Result:
     name: str
     size: int
 
 
-@dataclass
+@dataclass(frozen=True)
 class Profile:
     """A way to specify the quality of a track to look for.
     Whether to accept a lower quality temporarily, which
@@ -99,6 +103,7 @@ class Profile:
     the default and set a profile for any incoming
     tracks / albums.
     """
+    id: int
     name: str
     qualities: List[Quality]
     tolerance: float = 0.2
@@ -126,3 +131,104 @@ class Profile:
                     return result
 
         return None
+
+
+class ProfileRepo(ABC):
+
+    @abstractmethod
+    def list(self) -> List[Profile]:
+        """Return all the profiles"""
+
+    @abstractmethod
+    def create(self, name: str) -> Profile:
+        """Create a new profile from a name"""
+
+    @abstractmethod
+    def delete(self, id: int) -> None:
+        """Delete a profile by id"""
+
+    @abstractmethod
+    def update(self, id: int, **kwargs) -> None:
+        """Update a profile (name, tolerance, dual_formats)"""
+
+    @abstractmethod
+    def bulk_update(self, profiles: List[Profile]) -> None:
+        """Used for updating the positions"""
+
+
+class QualityRepo(ABC):
+
+    @abstractmethod
+    def list(self) -> List[Quality]:
+        """
+        List of qualities. The settings attribute should
+        either be LossySettings or LosslessSettings
+        """
+
+    @abstractmethod
+    def create(
+        self,
+        profile_id: int,
+        settings_id: int,
+        finish: bool = False
+    ) -> Quality:
+        """
+        Create a new Quality from a profile_id, a settings id
+        and optionally whether to finish on this quality
+        """
+
+    @abstractmethod
+    def delete(self, id: int) -> None:
+        """Delete a quality by id"""
+
+    @abstractmethod
+    def update(self, id: int, **kwargs) -> None:
+        """Used to update a quality"""
+
+    @abstractmethod
+    def bulk_update(self, qualities: List[Quality]) -> None:
+        """Used for updating the positions"""
+
+
+class LosslessSettingsRepo(ABC):
+    @abstractmethod
+    def list(self) -> List[LosslessSettings]:
+        """List lossless settings"""
+
+    @abstractmethod
+    def create(
+        self,
+        sample_rate_hz: int,
+        bit_depth: int,
+        channels: int
+    ) -> LosslessSettings:
+        """Create a new lossless setting from sample_rate_hz,
+        bit_depth and channels"""
+
+    @abstractmethod
+    def delete(self, id: int) -> None:
+        """Delete lossless setting by id"""
+
+    @abstractmethod
+    def update(self, id: int, **kwargs) -> None:
+        """Change property or properties in lossless seeing
+        by id.
+        """
+
+
+class LossySettingsRepo(ABC):
+    @abstractmethod
+    def list(self) -> List[LossySettings]:
+        """List lossy settings"""
+
+    @abstractmethod
+    def create(self, bitrate: int) -> LossySettings:
+        """Create new lossy settings from bitrate"""
+
+    @abstractmethod
+    def delete(self, id: int) -> None:
+        """Delete lossy settings by id"""
+
+    @abstractmethod
+    def update(self, id: int, **kwargs) -> None:
+        """Update name or bitrate of lossy settings"""

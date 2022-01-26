@@ -1,8 +1,0 @@
-[
-  {
-    name: "CD Lossless",
-    tolerance: 0.2,
-    qualities: [
-      {
-        name: "cd lossless",
-

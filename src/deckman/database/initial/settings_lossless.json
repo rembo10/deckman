@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "name": "high-res lossless",
+    "sample_rate_hz": 192000,
+    "bit_depth": 24,
+    "channels": 2
+  },
+  {
+    "id": 2,
+    "name": "cd lossless",
+    "sample_rate_hz": 44100,
+    "bit_depth": 16,
+    "channels": 2
+  }
+]
+

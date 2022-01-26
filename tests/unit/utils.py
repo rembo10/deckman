@@ -4,7 +4,16 @@ from deckman.model.artist import Artist, JoinArtist
 
 
 def make_join_artist(idx: int, jp: str) -> JoinArtist:
-    return JoinArtist(Artist(idx + 1, str(idx), f"FA{idx}"), jp, idx)
+    artist = Artist(
+        id=idx + 1,
+        musicbrainz_id=str(idx),
+        name=f"FA{idx}"
+    )
+    return JoinArtist(
+        artist=artist,
+        join_phrase=jp,
+        position=idx
+    )
 
 
 def make_join_artists(jps: List[str]) -> List[JoinArtist]:

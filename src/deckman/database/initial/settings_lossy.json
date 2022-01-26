@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "name": "320cbr",
+    "bitrate": 320
+  },
+  {
+    "id": 2,
+    "name": "256cbr",
+    "bitrate": 256
+  },
+  {
+    "id": 3,
+    "name": "192cbr",
+    "bitrate": 192
+  },
+  {
+    "id": 4,
+    "name": "v0",
+    "bitrate": 245
+  },
+  {
+    "id": 5,
+    "name": "v1",
+    "bitrate": 225
+  },
+  {
+    "id": 6,
+    "name": "v2",
+    "bitrate": 190
+  },
+  {
+    "id": 7,
+    "name": "v3",
+    "bitrate": 175
+  }
+]

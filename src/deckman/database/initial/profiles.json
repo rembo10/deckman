@@ -1,0 +1,39 @@
+[
+  {
+    id: 1,
+    name: "Best Available",
+    position: 0,
+    enabled: true
+  },
+  {
+    id: 2,
+    name: "Best Available (Hi-Res)",
+    position: 1,
+    enabled: true
+  },
+  {
+    id: 3,
+    name: "FLAC or MP3",
+    position: 2,
+    enabled: true
+  },
+  {
+    id: 4,
+    name: "CD Lossless",
+    position: 3,
+    enabled: true
+  },
+  {
+    id: 5,
+    name: "MP3",
+    position: 4,
+    enabled: true
+  },
+  {
+    id: 6,
+    name: "Hi-Res Lossless",
+    position: 5,
+    enabled: true
+  }
+]
+
