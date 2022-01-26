@@ -1,14 +1,8 @@
 import React from "react";
 
 
-const ProfileEditor = ({
-  onAddProfile,
-  onDeleteProfile,
-  onRenameProfile,
-  onReorderProfiles,
-
+export const ProfileEditor = ({
 }) => {
-
   return (<div>hello world</div>)
 
 }

@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin")
 
 
 module.exports = {
-  entry: "./frontend/src/index.tsx",
+  entry: "./frontend/index.tsx",
   module: {
     rules: [
       {
@@ -20,8 +20,8 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "frontend/src/index.html",
-      favicon: "assets/favicon/favicon.ico"
+      template: "./frontend/index.html",
+      favicon: "./assets/favicon/favicon.ico"
     })
   ],
   resolve: {

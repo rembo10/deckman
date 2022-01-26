@@ -8,5 +8,7 @@
     "allowJs": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true
-  }
+  },
+  "include": ["frontend/**/*"],
+  "exclude": ["**/*.test.tsx"]
 }
