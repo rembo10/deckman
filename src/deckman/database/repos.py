@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy import insert, select
 from sqlalchemy.engine import Connection
 
-from deckman.database.tables import artists # type: ignore
+from deckman.database.tables import artists  # type: ignore
 from deckman.model.artist import Artist, ArtistRepo
 from deckman.model.exceptions import NotFoundError
 
