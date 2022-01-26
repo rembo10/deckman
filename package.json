@@ -2,7 +2,7 @@
   "name": "deckman",
   "version": "1.0.0",
   "repository": "https://github.com/rembo10/deckman",
-  "author": "rembo10",
+  "author": "rembo10 <rembo10@users.noreply.github.com>",
   "license": "WTFPL",
   "scripts": {
     "build": "webpack --mode production",
