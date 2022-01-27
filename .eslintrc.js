@@ -9,7 +9,7 @@ module.exports = {
   },
   "overrides": [
     {
-      "files": ['**/*.ts', '**/*.tsx'],
+      "files": ["**/*.ts", "**/*.tsx"],
       "parser": "@typescript-eslint/parser",
       "plugins": [
         "@typescript-eslint"
@@ -21,5 +21,8 @@ module.exports = {
       ]
     }
   ],
-  "ignorePatterns": ["dist/*", "node_modules/*"]
+  "ignorePatterns": ["dist/*", "node_modules/*"],
+  "rules": {
+    "quotes": ["error", "double"]
+  }
 }
