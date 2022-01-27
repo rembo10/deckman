@@ -8,7 +8,8 @@
     "build": "webpack --mode production",
     "dev": "webpack-dev-server --mode development",
     "lint": "eslint .",
-    "test": "jest --rootDir ./frontend"
+    "test": "jest --rootDir ./frontend",
+    "test:watch": "yarn test --watch"
   },
   "devDependencies": {
     "@babel/core": "^7.16.12",
@@ -31,7 +32,6 @@
   },
   "dependencies": {
     "react": "^17.0.2",
-    "react-beautiful-dnd": "^13.1.0",
     "react-dom": "^17.0.2",
     "redux": "^4.1.2",
     "styled-components": "^5.3.3"
