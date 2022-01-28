@@ -21,3 +21,11 @@ def db_connection(engine, create_tables):
     with engine.connect() as conn:
         yield conn
         conn.rollback()
+
+@pytest.fixture(scope="session")
+def initial_data(engine):
+    with engine.connect() as conn:
+        with open("src/deckman/database/initial/settings_lossy.json") as f:
+            data = json.load(f)
+            conn.execute(settings_lossy.insert(), data)
+            conn.commit()

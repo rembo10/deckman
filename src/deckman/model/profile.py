@@ -4,7 +4,7 @@ from typing import List, Optional, Union
 
 
 @dataclass
-class LosslessSettings:
+class SettingsLossless:
     """Lossless quality representation"""
     id: int
     name: str
@@ -30,7 +30,7 @@ class LosslessSettings:
 
 
 @dataclass
-class LossySettings:
+class SettingsLossy:
     """Lossy quality representation"""
     id: int
     name: str
@@ -44,7 +44,7 @@ class LossySettings:
         return self.bitrate == other.bitrate
 
 
-Settings = Union[LosslessSettings, LossySettings]
+Settings = Union[SettingsLossless, SettingsLossy]
 
 
 @dataclass
@@ -162,7 +162,7 @@ class QualityRepo(ABC):
     def list(self) -> List[Quality]:
         """
         List of qualities. The settings attribute should
-        either be LossySettings or LosslessSettings
+        either be SettingsLossy or SettingsLossless
         """
 
     @abstractmethod
@@ -190,9 +190,9 @@ class QualityRepo(ABC):
         """Used for updating the positions"""
 
 
-class LosslessSettingsRepo(ABC):
+class SettingsLosslessRepo(ABC):
     @abstractmethod
-    def list(self) -> List[LosslessSettings]:
+    def list(self) -> List[SettingsLossless]:
         """List lossless settings"""
 
     @abstractmethod
@@ -201,7 +201,7 @@ class LosslessSettingsRepo(ABC):
         sample_rate_hz: int,
         bit_depth: int,
         channels: int
-    ) -> LosslessSettings:
+    ) -> SettingsLossless:
         """Create a new lossless setting from sample_rate_hz,
         bit_depth and channels"""
 
@@ -216,13 +216,13 @@ class LosslessSettingsRepo(ABC):
         """
 
 
-class LossySettingsRepo(ABC):
+class SettingsLossyRepo(ABC):
     @abstractmethod
-    def list(self) -> List[LossySettings]:
+    def list(self) -> List[SettingsLossy]:
         """List lossy settings"""
 
     @abstractmethod
-    def create(self, bitrate: int) -> LossySettings:
+    def create(self, bitrate: int) -> SettingsLossy:
         """Create new lossy settings from bitrate"""
 
     @abstractmethod

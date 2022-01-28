@@ -1,8 +1,8 @@
-# from fastapi.testclient import TestClient
+from fastapi.testclient import TestClient
 
-# from deckman.api import API
-# from deckman.model.artist import Artist, ArtistRepo
+from deckman.api import API
 
+def test_get_settings_lossy(engine):
 
 # def test_read_artists():
 #     app = API(FakeArtistRepo())

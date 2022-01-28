@@ -7,6 +7,7 @@
   "scripts": {
     "build": "webpack --mode production",
     "dev": "webpack-dev-server --mode development",
+    "dev:server": "nodemon --watch src -e py --exec \"poetry run deckman\"",
     "lint": "eslint .",
     "test": "jest --rootDir ./frontend",
     "test:watch": "yarn test --watch"
@@ -16,6 +17,8 @@
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
     "@babel/preset-typescript": "^7.16.7",
+    "@testing-library/jest-dom": "^5.16.1",
+    "@testing-library/react": "^13.0.0-alpha.5",
     "@types/react": "^17.0.38",
     "@types/react-dom": "^17.0.11",
     "@typescript-eslint/eslint-plugin": "^5.10.1",
@@ -24,6 +27,7 @@
     "eslint": "^8.7.0",
     "html-webpack-plugin": "^5.5.0",
     "jest": "^27.4.7",
+    "nodemon": "^2.0.15",
     "ts-loader": "^9.2.6",
     "typescript": "^4.5.4",
     "webpack": "^5.66.0",
@@ -31,8 +35,8 @@
     "webpack-dev-server": "^4.7.3"
   },
   "dependencies": {
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "react": "^18.0.0-rc.0-next-529dc3ce8-20220124",
+    "react-dom": "^18.0.0-rc.0-next-529dc3ce8-20220124",
     "redux": "^4.1.2",
     "styled-components": "^5.3.3"
   }

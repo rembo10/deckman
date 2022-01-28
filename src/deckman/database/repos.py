@@ -1,37 +1,58 @@
-from typing import List
+from typing import Generic, List, TypeVar
 
-from sqlalchemy import insert, select
+from sqlalchemy import delete, insert, select, update
 from sqlalchemy.engine import Connection
+from sqlalchemy.exc import IntegrityError
 
-from deckman.database.tables import artists  # type: ignore
+from deckman.database.tables import *  # type: ignore
 from deckman.model.artist import Artist, ArtistRepo
-from deckman.model.exceptions import NotFoundError
+from deckman.model.profile import SettingsLossy, SettingsLossyRepo
+from deckman.model.exceptions import AlreadyExistsError, NotFoundError
 
 
-class SQLAlchemyArtistRepo(ArtistRepo):
+T = TypeVar('T')
 
-    def __init__(self, conn: Connection) -> None:
-        self.conn = conn
+class SQLAlchemyBaseRepo(Generic[T]):
 
-    def create(self, musicbrainz_id: str) -> Artist:
-        stmt = insert(artists).values(musicbrainz_id=musicbrainz_id)
-        result = self.conn.execute(stmt)
-        return Artist(
-            id=result.inserted_primary_key[0],
-            musicbrainz_id=musicbrainz_id
-        )
+    def __init__(self, connection: Connection) -> None:
+        self.connection = connection
 
-    def get(self, artist_id: int) -> Artist:
-        stmt = select(artists).where(artists.c.id == artist_id)
-        cursor = self.conn.execute(stmt)
+    def create(self, **kwargs) -> T:
+        stmt = insert(self.table).values(**kwargs)
+        try:
+            result = self.connection.execute(stmt)
+        except IntegrityError:
+            raise AlreadyExistsError
+        return self.model(id=result.inserted_primary_key[0], **kwargs)
+
+    def get(self, id: int) -> T:
+        stmt = select(self.table).where(self.table.c.id == id)
+        cursor = self.connection.execute(stmt)
         row = cursor.fetchone()
         if row:
-            return Artist(**row._asdict())
+            return self.model(**row._asdict())
         else:
             raise NotFoundError
 
-    def list(self) -> List[Artist]:
-        stmt = select(artists)
-        cursor = self.conn.execute(stmt)
+    def list(self) -> List[T]:
+        stmt = select(self.table)
+        cursor = self.connection.execute(stmt)
         rows = cursor.fetchall()
-        return [Artist(**row._asdict()) for row in rows]
+        return [self.model(**row._asdict()) for row in rows]
+
+    def update(self, id: int, **kwargs) -> T:
+        stmt = update(self.table).where(self.table.c.id == id).values(**kwargs)
+        self.connection.execute(stmt)
+        return self.model(id=id, **kwargs)
+
+    def delete(self, id: int) -> None:
+        stmt = delete(self.table).where(self.table.c.id == id)
+        self.connection.execute(stmt)
+
+class SQLAlchemyArtistRepo(SQLAlchemyBaseRepo):
+    model = Artist
+    table = artists
+
+class SQLAlchemySettingsLossyRepo(SQLAlchemyBaseRepo):
+    model = SettingsLossy
+    table = settings_lossy
