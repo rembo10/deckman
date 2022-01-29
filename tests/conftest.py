@@ -12,7 +12,7 @@ def engine():
 @pytest.fixture(scope="session")
 def create_tables(engine):
     metadata_obj.create_all(engine)
-    yield
+    yield engine
     metadata_obj.drop_all(engine)
 
 

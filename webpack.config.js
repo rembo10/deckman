@@ -27,4 +27,11 @@ module.exports = {
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
   },
+  devServer: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:8181",
+      }
+    }
+  },
 };

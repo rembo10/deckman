@@ -6,7 +6,16 @@ from sqlalchemy.exc import IntegrityError
 
 from deckman.database.tables import *  # type: ignore
 from deckman.model.artist import Artist, ArtistRepo
-from deckman.model.profile import SettingsLossy, SettingsLossyRepo
+from deckman.model.profile import (
+    SettingsLossless,
+    SettingsLosslessRepo,
+    SettingsLossy,
+    SettingsLossyRepo,
+    Profile,
+    ProfileRepo,
+    Quality,
+    QualityRepo,
+    )
 from deckman.model.exceptions import AlreadyExistsError, NotFoundError
 
 
@@ -56,3 +65,15 @@ class SQLAlchemyArtistRepo(SQLAlchemyBaseRepo):
 class SQLAlchemySettingsLossyRepo(SQLAlchemyBaseRepo):
     model = SettingsLossy
     table = settings_lossy
+
+class SQLAlchemySettingsLosslessRepo(SQLAlchemyBaseRepo):
+    model = SettingsLossless
+    table = settings_lossless
+
+class SQLAlchemyProfileRepo(SQLAlchemyBaseRepo):
+    model = Profile
+    table = profiles
+
+class SQLAlchemyQualityRepo(SQLAlchemyBaseRepo):
+    model = Quality
+    table = qualities

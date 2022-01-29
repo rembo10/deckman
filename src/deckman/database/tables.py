@@ -37,10 +37,10 @@ settings_lossless = Table(
     metadata_obj,
     Column("id", Integer, primary_key=True),
     Column("name", String(128), unique=True),
-    Column("sample_rate_khz", Float),
+    Column("sample_rate_hz", Integer),
     Column("bit_depth", Integer),
     Column("channels", Integer),
-    UniqueConstraint("sample_rate_khz", "bit_depth", "channels")
+    UniqueConstraint("sample_rate_hz", "bit_depth", "channels")
 )
 
 
@@ -82,6 +82,8 @@ profiles = Table(
     metadata_obj,
     Column("id", Integer, primary_key=True),
     Column("name", String(128), unique=True),
+    Column("position", Integer),
+    Column("enabled", Boolean, default=True),
     Column("tolerance", Float, default=0.2),
     Column("dual_formats", Boolean, default=False),
 )

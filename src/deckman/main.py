@@ -7,23 +7,29 @@ import uvicorn
 
 from deckman.api import create_app
 from deckman.database.repos import SQLAlchemySettingsLossyRepo
-from deckman.database.tables import metadata_obj, settings_lossy
+from deckman.database.tables import *
 
 
 def start():
     engine = create_engine("sqlite+pysqlite:///deckman.db", future=True)
     metadata_obj.create_all(engine)
     with engine.connect() as conn:
-        with open("src/deckman/database/initial/settings_lossy.json") as f:
-            data = json.load(f)
-            try:
-                conn.execute(settings_lossy.insert(), data)
-                conn.commit()
-            except:
-                pass
-    repo = SQLAlchemySettingsLossyRepo(engine)
-    app = create_app(repo)
-    uvicorn.run(app)
+        for file, table in [
+            ("settings_lossy", settings_lossy),
+            ("settings_lossless", settings_lossless),
+            ("qualities", qualities),
+            ("profiles", profiles)
+        ]:
+
+            with open(f"src/deckman/database/initial/{file}.json") as f:
+                data = json.load(f)
+                try:
+                    conn.execute(table.insert(), data)
+                    conn.commit()
+                except Exception as e:
+                    pass
+    app = create_app(engine)
+    uvicorn.run(app, port=8181)
 
 
 if __name__ == "__main__":

@@ -58,7 +58,10 @@ class TargetSize:
 class Quality:
 
     id: int
-    settings: Settings
+    profile_id: int
+    position: int
+    settings_lossless_id: Settings
+    settings_lossy_id: Settings
     finish: bool = False
 
     @property
@@ -105,7 +108,9 @@ class Profile:
     """
     id: int
     name: str
-    qualities: List[Quality]
+    position: int
+    enabled: bool
+    #qualities: List[Quality]
     tolerance: float = 0.2
     dual_formats: Optional[bool] = False
 
